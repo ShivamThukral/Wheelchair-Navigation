@@ -1,0 +1,15 @@
+<launch>
+
+  <group if="$(env ROSLAUNCH_SSH_UNKNOWN)">
+
+    <machine name="autorally-master" address="$(env MASTER_HOSTNAME)" user="$(env MASTER_USER)" default="true"
+      env-loader="/home/autorally/catkin_ws/devel/env.sh"/>
+
+  </group>
+
+  <group unless="$(env ROSLAUNCH_SSH_UNKNOWN)">
+    <machine name="autorally-master" address="$(env MASTER_HOSTNAME)" default="true"/>
+  </group>
+
+  <machine name="autorally-ocs" address="$(env HOSTNAME)" />
+</launch>

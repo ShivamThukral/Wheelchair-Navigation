@@ -1,0 +1,3 @@
+'steering': {center: 1500, min: 1000, max: 2000, reverse: false}
+'throttle': {center: 1500, min: 1000, max: 2000, reverse: false}
+'frontBrake': {center: 1500, min: 1500, max: 2000, reverse: false}

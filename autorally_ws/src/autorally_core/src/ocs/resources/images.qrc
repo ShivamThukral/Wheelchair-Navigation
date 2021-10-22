@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/camera.png</file>
+        <file>images/autorally.png</file>
+    </qresource>
+</RCC>

@@ -1,3 +1,7 @@
+autorally_ws/build/*
+.idea
+autorally_ws/devel/*
+
 # Prerequisites
 *.d
 
@@ -30,3 +34,4 @@
 *.exe
 *.out
 *.app
+/autorally_ws/.catkin_workspace

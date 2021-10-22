@@ -1,0 +1,94 @@
+<launch>
+    <include file="$(find autorally_core)/launch/hardware.machine" />
+
+    <node
+            pkg = "autorally_control"
+            type = "path_integral_bf"
+            name = "mppi_controller"
+            output = "screen">
+
+        <!--Pose topic configuration parameters -->
+        <param name="pose_estimate" value="/ground_truth/state" />
+        <param name="path_topic" value="/mppi_controller/nominal_path" />
+
+        <!--Debug/Sim mode parameter -->
+        <param name="debug_mode" value="true" />
+
+        <!--Setup parameters-->
+        <param name="hz" value="40" />  <!--[int] control publishing frequency per second default: 50-->
+        <param name="num_timesteps" value="120" /> <!--[int] number of timesteps to look ahead default : 100-->
+
+        <param name="x_pos" value="0.0" />
+        <param name="y_pos" value="0.0" />
+        <param name="heading" value="0.0" />
+
+        <!-- How many controls are executed between optimization loops -->
+        <param name="optimization_stride" value="1" />          <!-- Optimisation delay: Don't optimize variables that are already being executed first place is already executed-->
+        <param name="use_feedback_gains" value="true" />
+
+        <!--Model parameters-->
+        <param name="model_path" value="$(env AR_MPPI_PARAMS_PATH)/models/basis_function_09_12_2018.npz"/>
+
+        <!-- Control hyper-parameters-->
+        <param name="gamma" value=".15" />                      <!--[double] mppi temperature parameter of the softmax(temperatures lead to softer distributions,) default : .15-->
+        <param name="num_iters" value="1" />                    <!-- [int] number of optimization iterations per timestep  default: .65 -->
+
+        <!-- Control parameters -->
+        <param name="init_steering" value="0.0" />              <!-- [double] standard deviation in the steering control channel  default: .65 -->
+        <param name="init_throttle" value="0.0" />             <!-- [double] standard deviation in the steering control channel  default: .65 -->
+        <param name="steering_std" value="0.275" />                 <!-- [double] standard deviation in the steering control channel  default: .65 -->
+        <param name="throttle_std" value="0.3" />               <!-- [double] standard deviation in the throttle control channel  default: .65 -->
+
+        <!-- Control Constraints -->
+        <param name="max_throttle" value="0.99" />               <!-- [double] maximum throttle command  default: .65 -->
+        <param name="min_throttle" value="-0.99" />              <!-- [double] minimum throttle command  default: -.99 -->
+        <param name="max_steering" value="0.99" />              <!-- [[double] maximum steering command default: .99 -->
+        <param name="min_steering" value="-0.99" />             <!-- [double] minimum steering comand  default: -.99 -->
+
+        <!-- Cost Parameters -->
+        <param name="l1_cost" value="false"/>
+        <param name="desired_speed" value="6.0" />              <!-- [double] target speed for the controller default: 6.0 -->
+        <param name="speed_coefficient" value="0.0" />         <!-- [double] weight on speed cost default: 4.25 -->
+        <param name="track_coefficient" value="200.0" />        <!-- [double] weight on track cost default:200.0 -->
+        <param name="max_slip_angle" value="1.25" />            <!--[double] maximum allowable slip angle before killing trajectory default:1.25-->
+        <param name="slip_penalty" value="20.0" />              <!--[double] weight on square of the slip angle default:10.0-->
+        <param name="track_slop" value="0.0" />                 <!-- NOT USED [double] threshold below which the track cost gets set to zero default: 0-->
+        <param name="crash_coeff" value="10000.0" />            <!--[double] penalty for crashing default:10000.0-->
+        <param name="steering_coeff" value="0.0" />             <!--[double] control cost for steering default:0-->
+        <param name="throttle_coeff" value="0.0" />             <!--[double] control cost for throttle default:0-->
+        <param name="boundary_threshold" value="0.65" />        <!-- If the value is greater then this then crash!! default: 0.65-->
+        <param name="discount" value = "0.9" />                 <!-- Discount applied for timestep default: 0.9-->
+        <!--Wheelchair cost params added -->
+        <param name="user_desired_linear_speed" value="0.0" />        <!-- Shivam -->
+        <param name="user_desired_angular_speed" value="0.0" />        <!-- Shivam -->
+        <param name="linear_speed_coefficient" value="600.0" />          <!-- Shivam -->
+        <param name="angular_speed_coefficient" value="600.0" />          <!-- Shivam -->
+        <param name="smoothness_coefficient" value="0.0" />          <!-- Shivam -->
+        <param name="goal_coefficient" value="0.0" />          <!-- Shivam -->
+
+        <!--Change by Shivam -->
+<!--        <param name="map_path" value="$(env AR_MPPI_PARAMS_PATH)/maps/gazebo/gazebo_map.npz" />-->
+<!--    <param name="map_path" value="$(env AR_MPPI_PARAMS_PATH)/maps/gazebo/map_office_small_bounds.npz" />-->
+<!--        <param name="map_path" value="$(env AR_MPPI_PARAMS_PATH)/maps/marietta_costmap_09_08_2018.npz" />-->
+            <param name="map_path" value="$(env AR_MPPI_PARAMS_PATH)/maps/gazebo/small_office_26_05.npz" />
+<!--        <param name="map_path" value="$(env AR_MPPI_PARAMS_PATH)/maps/gazebo/my_office_env.npz" />-->
+<!--        <param name="map_path" value="$(env AR_MPPI_PARAMS_PATH)/maps/gazebo/large_office_10_06.npz" />-->
+    </node>
+
+    <node
+            pkg = "autorally_control"
+            type = "path_integral_monitor"
+            name = "mppi_monitor"
+            output = "screen">
+    </node>
+
+<!--    <node-->
+<!--            pkg = "autorally_control"-->
+<!--            type = "lap_stats.py"-->
+<!--            name = "stat_tracker"-->
+<!--            output = "screen">-->
+<!--        <param name="controller_type" value="mppi_controller" />-->
+<!--        <param name="tag" value="Basis Function Model - Path Integral"/>-->
+<!--    </node>-->
+
+</launch>
