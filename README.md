@@ -58,9 +58,10 @@ If everything loads successfully, then you should be able to see:
 
 Note: This demo requires 32GB of RAM for run successfully.
 
-#Results
-![](results/video1.mp4)
-![](results/video1.mp4)
+# Results
+![](results/video1.gif)
+
+![](results/video2.gif)
 
 # How to run shared-controller with your environment?
 
