@@ -329,7 +329,7 @@ protected:
   const float DISCOUNT = 0.9; ///< Discount on the crashing cost coefficient
   //constant variables by ST
   const double PI = 3.14159265; ///< Value for pi
-  const int HEADING_BINS = 4;
+  const int HEADING_BINS = 8;
 
   bool l1_cost_; //Whether to use L1 speed cost (if false it is L2)
 

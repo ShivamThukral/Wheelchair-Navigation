@@ -389,6 +389,7 @@ inline std::vector<float4> MPPICosts::loadTrackData(std::string map_path, Eigen:
   x_max = xBounds[1];
   y_min = yBounds[0];
   y_max = yBounds[1];
+  //printf("%f, %f ------ %f,%f\n", x_min,x_max,y_min,y_max);
   //ST: Heading lies between 0 to 360 only. Remember that autorally does not wrap around the heading....
   z_min = 0.0;
   z_max = 2.0*PI;
@@ -397,7 +398,7 @@ inline std::vector<float4> MPPICosts::loadTrackData(std::string map_path, Eigen:
   width_ = int((x_max - x_min)*ppm);
   height_ = int((y_max - y_min)*ppm);
   depth_ = int(HEADING_BINS);  //ST
-
+  printf("%f - %f\n", width_, height_);
   initCostmap();
   initObstacles();
   initCostmap3D(); //ST: just initialise here - updates are done later
@@ -448,14 +449,14 @@ inline void MPPICosts::setDesiredSpeed(float desired_speed)
 
 inline void MPPICosts::debugDisplayInit()
 {
-    debugDisplayInit(10, 10, 50);
-    //debugDisplayInit(20, 20, 50);
+    //debugDisplayInit(10, 10, 50);
+    debugDisplayInit(15, 15, 30);
 }
 
 inline void MPPICosts::debugDisplayCostmapInit()
 {
-    debugDisplayCostmapInit(10, 10, 50);
-    //debugDisplayInit(20, 20, 50);
+    //debugDisplayCostmapInit(10, 10, 50);
+    debugDisplayCostmapInit(15, 15, 30);
 }
 
 inline void MPPICosts::debugDisplayInit(int width_m, int height_m, int ppm)
@@ -840,18 +841,18 @@ inline __device__ float MPPICosts::computeCost(float* s, float* u, float* du,
 //        printf("%f - %f\n", params_d_->user_desired_angular_speed, s[6]);
 
     //obstacle cost
-    float track_cost = getTrackCost(s, crash);
-    float crash_cost = powf(params_.discount, timestep)*getCrashCost(s, crash, timestep);
+    float track_cost = 0;//getTrackCost(s, crash);
+    float crash_cost = 0;//powf(params_.discount, timestep)*getCrashCost(s, crash, timestep);
 
     //costmap cost
-    float desirability_3D_cost = 0.0;//getCostmap3DCost(s);
+    float desirability_3D_cost = getCostmap3DCost(s);
     float desirability_2D_cost = 0.0;//getDesirabilityCost(s,crash);
 
     //control cost
-    float control_cost = 0.0;//getControlCost(u, du, vars);
+    float control_cost = 0;//getControlCost(u, du, vars);
 
     // jerk cost or smoothness cost
-    float smoothness_cost = 0.0;//getSmoothnessCost(u,prev_du);
+    float smoothness_cost = 0;//getSmoothnessCost(u,prev_du);
 
     // speed costs - linear + angular + stop call
     float linear_velocity_cost = powf(params_.discount, timestep)*getLinearSpeedCost(s, crash); // time decay left
