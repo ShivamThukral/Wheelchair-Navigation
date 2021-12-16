@@ -1,6 +1,39 @@
 # Wheelchair-Navigation
 
-Real-time wheelchair navigation with shared control using model predictive path integral (MPPI) controller.
+A smart wheelchair improves the quality of life for older adults by supporting their mobility independence. Some
+critical maneuvering tasks, like table docking and doorway passage, can be challenging for older adults in wheelchairs,
+especially those with additional impairment of cognition, perception or fine motor skills. Supporting such functions in
+a shared manner with robot control seems to be an ideal solution. Considering this, we propose to augment smart
+wheelchair perception with the capability to identify potential docking locations in indoor scenes.
+
+[ApproachFinder-CV](https://github.com/ShivamThukral/ApproachFinder-CV) is a computer vision pipeline that detects safe docking poses and estimates their desirability weight based on
+hand-selected geometric relationships and visibility. Although robust, this pipeline is computationally intensive. We
+leverage this vision pipeline to generate ground truth labels used to train an end-to-end differentiable neural net that
+is 15x faster.
+
+[ApproachFinder-NN](https://github.com/ShivamThukral/ApproachFinder-NN) is a point-based method that draws motivation from Hough voting and uses deep point
+cloud features to vote for potential docking locations. Both approaches rely on just geometric information, making them
+invariant to image distortions. A large-scale indoor object detection dataset, SUN RGB-D, is used to design, train and
+evaluate the two pipelines.
+
+
+Potential docking locations are encoded as a 3D temporal desirability cost map that can be integrated into any real-time
+path planner. As a proof of concept, we use a model predictive controller that consumes this 3D costmap with efficiently
+designed task-driven cost functions to share human intent. This [wheelchair navigation](https://github.com/ShivamThukral/Wheelchair-Navigation) controller outputs a nominal path that is safe,
+goal-oriented and jerk-free for wheelchair navigation.
+
+# Brief Overview
+
+We used a MPC based controller that works by interleaving optimization and execution. This is a sampling based, derivative
+free approach which was applied to aggressive autonomous driving. At each time step, controller estimates the optimal control
+sequence from the previous time step and uses importance sampling to generate thousands of new sequences of control
+inputs. These sequences are propagated forward in time using system dynamics, and each trajectory is evaluated according
+to a set cost functions. The estimate of the optimal control sequence is then updated with a cost-weighted average over
+the sampled trajectories.
+
+Our work uses this Autorally platform with handcrafted cost functions that are meticulously designed to navigate in a
+room with obstacle avoidance and proceeding according to the user’s intent. Specifically, we fuse desirability cost map,
+obstacle map and user joystick commands to produce safe and jerk free paths.
 
 # Installation Instructions:
 
@@ -17,18 +50,7 @@ Real-time wheelchair navigation with shared control using model predictive path 
        system, you must run
        `source src/autorally/autorally_util/setupEnvLocal.sh`
 
-# Brief Overview
 
-MPPI is a stochastic MPC that works by interleaving optimization and execution. This is a sampling based, derivative
-free approach which was applied to aggressive autonomous driving. At each time step, MPPI estimates the optimal control
-sequence from the previous time step and uses importance sampling to generate thousands of new sequences of control
-inputs. These sequences are propagated forward in time using system dynamics, and each trajectory is evaluated according
-to a set cost functions. The estimate of the optimal control sequence is then updated with a cost-weighted average over
-the sampled trajectories.
-
-Our work uses this Autorally platform with handcrafted cost functions that are meticulously designed to navigate in a
-room with obstacle avoidance and proceeding according to the user’s intent. Specifically, we fuse desirability cost map,
-obstacle map and user joystick commands to produce safe and jerk free paths.
 
 # Simulation Demo:
 
